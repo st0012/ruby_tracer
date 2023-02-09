@@ -1,6 +1,6 @@
 # ruby_tracer
 
-ruby_tracer is an extraction of [`ruby/debug`](https://github.com/ruby/debug)'s [powerful tracers](https://github.com/ruby/debug/blob/master/lib/debug/tracer.rb), with improved APIs for direct use or library integration.
+ruby_tracer is an extraction of [`ruby/debug`](https://github.com/ruby/debug)'s [powerful tracers](https://github.com/ruby/debug/blob/master/lib/debug/tracer.rb), with user-facing APIs and some improvements on accuracy.
 
 Its goal is to help users understand their Ruby programss activities by emitting useful trace information, such us:
 
@@ -8,6 +8,7 @@ Its goal is to help users understand their Ruby programss activities by emitting
 - What exceptions are raised during the execution (`ExceptionTracer`)
 - When method calls are being performed (`CallTracer`)
 - Line execution (`LineTracer`)
+
 
 ## Installation
 
@@ -23,22 +24,105 @@ $ gem install ruby_tracer
 
 ## Usage
 
-### CallTracer
-
-### LineTracer
-
-### ExceptionTracer
-
 ### ObjectTracer
 
 ```rb
-user = User.new
+class User
+  def initialize(name) = (@name = name)
+
+  def name() = @name
+end
+
+def authorized?(user)
+  user.name == "John"
+end
+
+user = User.new("John")
 tracer = ObjectTracer.new(user)
 tracer.start do
-  user.name 
-  authorize(user)
+  user.name
+  authorized?(user)
 end
+
+ #depth:3  #<User:0x000000010696cad8 @name="John"> receives #name (User#name) at test.rb:14:in `block in <main>'
+ #depth:3  #<User:0x000000010696cad8 @name="John"> is used as a parameter user of Object#authorized? at test.rb:15:in `block in <main>'
+ #depth:4  #<User:0x000000010696cad8 @name="John"> receives #name (User#name) at test.rb:8:in `authorized?'
 ```
+
+### ExceptionTracer
+
+```rb
+ExceptionTracer.new.start
+
+begin
+  raise "boom"
+rescue StandardError
+  nil
+end
+
+ #depth:1  #<RuntimeError: boom> at test.rb:4
+```
+
+### CallTracer
+
+```rb
+class User
+  def initialize(name) = (@name = name)
+
+  def name() = @name
+end
+
+def authorized?(user)
+  user.name == "John"
+end
+
+user = User.new("John")
+tracer = CallTracer.new
+tracer.start do
+  user.name
+  authorized?(user)
+end
+
+ #depth:4 >    block at test.rb:13
+ #depth:5 >     User#name at test.rb:4
+ #depth:5 <     User#name #=> "John" at test.rb:4
+ #depth:5 >     Object#authorized? at test.rb:7
+ #depth:6 >      User#name at test.rb:4
+ #depth:6 <      User#name #=> "John" at test.rb:4
+ #depth:6 >      String#== at test.rb:8
+ #depth:6 <      String#== #=> true at test.rb:8
+ #depth:5 <     Object#authorized? #=> true at test.rb:9
+ #depth:4 <    block #=> true at test.rb:16
+```
+
+### LineTracer
+
+```rb
+class User
+  def initialize(name) = (@name = name)
+
+  def name() = @name
+end
+
+def authorized?(user)
+  user.name == "John"
+end
+
+user = User.new("John")
+tracer = LineTracer.new
+tracer.start do
+  user.name
+  authorized?(user)
+end
+
+ #depth:4  at test.rb:14
+ #depth:4  at test.rb:15
+ #depth:5  at test.rb:8
+```
+
+## Acknowledgement
+
+[@ko1](https://github.com/ko1) (Koichi Sasada) implemented the majority of [`ruby/debug`](https://github.com/ruby/debug), including its tracers. So this project wouldn't exist without his amazing work there.
 
 ## Development
 
