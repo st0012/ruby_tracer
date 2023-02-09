@@ -1,24 +1,44 @@
-# Ruby::Tracer
+# ruby_tracer
 
-TODO: Delete this and the text below, and describe your gem
+ruby_tracer is an extraction of [`ruby/debug`](https://github.com/ruby/debug)'s [powerful tracers](https://github.com/ruby/debug/blob/master/lib/debug/tracer.rb), with improved APIs for direct use or library integration.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ruby/tracer`. To experiment with that code, run `bin/console` for an interactive prompt.
+Its goal is to help users understand their Ruby programss activities by emitting useful trace information, such us:
+
+- How and where is the target object is being used (`ObjectTracer`)
+- What exceptions are raised during the execution (`ExceptionTracer`)
+- When method calls are being performed (`CallTracer`)
+- Line execution (`LineTracer`)
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+```shell
+$ bundle add ruby_tracer --group=development,test
+```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+```shell
+$ gem install ruby_tracer
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+### CallTracer
+
+### LineTracer
+
+### ExceptionTracer
+
+### ObjectTracer
+
+```rb
+user = User.new
+tracer = ObjectTracer.new(user)
+tracer.start do
+  user.name 
+  authorize(user)
+end
+```
 
 ## Development
 
