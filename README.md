@@ -1,3 +1,6 @@
+> **Warning**
+> This project has been moved to [`ruby/tracer`](https://github.com/ruby/tracer)
+
 # ruby_tracer
 
 ruby_tracer is an extraction of [`ruby/debug`](https://github.com/ruby/debug)'s [powerful tracers](https://github.com/ruby/debug/blob/master/lib/debug/tracer.rb), with user-facing APIs, IRB-integration, and improvements on accuracy.
